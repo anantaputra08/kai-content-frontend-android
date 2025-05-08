@@ -1,0 +1,183 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.coordinatorlayout.widget.CoordinatorLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:backgroundTint="@android:color/transparent"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical">
+
+        <View
+            android:layout_width="40dp"
+            android:layout_height="4dp"
+            android:layout_gravity="center_horizontal"
+            android:layout_marginTop="12dp"
+            android:alpha="0.7"
+            android:background="#E0E0E0" />
+
+        <TextView
+            android:id="@+id/content_title"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginHorizontal="24dp"
+            android:layout_marginTop="20dp"
+            android:fontFamily="sans-serif-medium"
+            android:textColor="@color/primary_text"
+            android:textSize="22sp"
+            android:textStyle="bold"
+            tools:text="Content Title" />
+
+        <TextView
+            android:id="@+id/content_description"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginHorizontal="24dp"
+            android:layout_marginTop="16dp"
+            android:lineSpacingExtra="4dp"
+            android:textColor="@color/secondary_text"
+            android:textSize="15sp"
+            tools:text="This is the description text that provides more details about the content. It can be multiple lines long and should be easy to read." />
+
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:layout_marginHorizontal="24dp"
+            android:layout_marginTop="20dp"
+            android:background="#EEEEEE" />
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginHorizontal="24dp"
+            android:layout_marginTop="16dp"
+            android:orientation="horizontal">
+
+            <ImageView
+                android:layout_width="22dp"
+                android:layout_height="22dp"
+                android:layout_gravity="center_vertical"
+                android:contentDescription="Categories icon"
+                android:src="@drawable/ic_category"
+                app:tint="@color/blue_900" />
+
+            <TextView
+                android:id="@+id/content_categories"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_vertical"
+                android:layout_marginStart="12dp"
+                android:textColor="@color/secondary_text"
+                android:textSize="14sp"
+                tools:text="Technology, Education, Design" />
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginHorizontal="24dp"
+            android:layout_marginTop="16dp"
+            android:orientation="horizontal">
+
+            <ImageView
+                android:layout_width="22dp"
+                android:layout_height="22dp"
+                android:layout_gravity="center_vertical"
+                android:contentDescription="View count icon"
+                android:src="@drawable/ic_eye"
+                app:tint="@color/blue_900" />
+
+            <TextView
+                android:id="@+id/content_view_count"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_vertical"
+                android:layout_marginStart="12dp"
+                android:textColor="@color/secondary_text"
+                android:textSize="14sp"
+                tools:text="1,245 views" />
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginHorizontal="24dp"
+            android:layout_marginTop="16dp"
+            android:orientation="horizontal">
+
+            <ImageView
+                android:layout_width="22dp"
+                android:layout_height="22dp"
+                android:layout_gravity="center_vertical"
+                android:contentDescription="Rank icon"
+                android:src="@drawable/ic_chart"
+                app:tint="@color/blue_900" />
+
+            <TextView
+                android:id="@+id/content_rank"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_vertical"
+                android:layout_marginStart="12dp"
+                android:textColor="@color/secondary_text"
+                android:textSize="14sp"
+                tools:text="Rank #3 in top content" />
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginHorizontal="24dp"
+            android:layout_marginTop="16dp"
+            android:layout_marginBottom="24dp"
+            android:orientation="horizontal">
+
+            <ImageView
+                android:id="@+id/image_check"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_vertical"
+                android:contentDescription="Status icon"
+                android:src="@drawable/ic_status"
+                app:tint="@color/blue_900" />
+
+<!--            <TextView-->
+<!--                android:id="@+id/content_status"-->
+<!--                android:layout_width="0dp"-->
+<!--                android:layout_height="wrap_content"-->
+<!--                android:layout_gravity="center_vertical"-->
+<!--                android:layout_marginStart="12dp"-->
+<!--                android:layout_weight="1"-->
+<!--                android:textColor="@color/secondary_text"-->
+<!--                android:textSize="14sp"-->
+<!--                tools:text="Active" />-->
+
+            <com.google.android.material.chip.Chip
+                android:id="@+id/content_status"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="12dp"
+                android:text="Active"
+                android:textColor="@color/white"
+                android:textSize="12sp"
+                app:chipBackgroundColor="@color/status_default"
+                app:chipMinHeight="28dp" />
+        </LinearLayout>
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/action_button"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginHorizontal="24dp"
+            android:layout_marginBottom="32dp"
+            android:backgroundTint="@color/blue_900"
+            android:text="Edit Content"
+            android:textColor="@color/white"
+            android:textAllCaps="false"
+            app:cornerRadius="8dp" />
+    </LinearLayout>
+</androidx.coordinatorlayout.widget.CoordinatorLayout>

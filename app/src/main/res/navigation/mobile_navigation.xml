@@ -1,0 +1,115 @@
+<?xml version="1.0" encoding="utf-8"?>
+<navigation xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/mobile_navigation"
+    app:startDestination="@+id/nav_home">
+
+    <fragment
+        android:id="@+id/nav_home"
+        android:name="com.example.kai_content.ui.home.HomeFragment"
+        android:label="@string/menu_home"
+        tools:layout="@layout/fragment_home" >
+        <action
+            android:id="@+id/action_homeFragment_to_showContentFragment"
+            app:destination="@id/nav_showContent" />
+    </fragment>
+
+
+    <fragment
+        android:id="@+id/nav_showContent"
+        android:name="com.example.kai_content.ui.content.ShowContentFragment"
+        android:label="@string/fragment_show_content"
+        tools:layout="@layout/fragment_show_content" >
+        <action
+            android:id="@+id/action_showContentFragment_self"
+            app:destination="@id/nav_showContent"
+            app:popUpTo="@id/nav_showContent"
+            app:popUpToInclusive="true"/>
+        <action
+            android:id="@+id/action_showContentFragment_to_reviewContentFragment"
+            app:destination="@id/nav_reviewContent" />
+    </fragment>
+
+    <fragment
+        android:id="@+id/nav_reviewContent"
+        android:name="com.example.kai_content.ui.content.ReviewContentDialogFragment"
+        android:label="@string/fragment_review_content"
+        tools:layout="@layout/fragment_review_content_dialog" >
+    </fragment>
+
+    <fragment
+        android:id="@+id/nav_complaint"
+        android:name="com.example.kai_content.ui.complaint.ComplaintFragment"
+        android:label="@string/menu_complaint"
+        tools:layout="@layout/fragment_complaint" />
+
+    <fragment
+        android:id="@+id/nav_favorite"
+        android:name="com.example.kai_content.ui.favorite.ListFavoriteFragment"
+        android:label="@string/menu_favorite"
+        tools:layout="@layout/fragment_list_favorite" >
+        <action
+            android:id="@+id/action_favoriteFragment_to_showContentFragment"
+            app:destination="@id/nav_showContent" />
+    </fragment>
+
+    <fragment
+        android:id="@+id/nav_slideshow"
+        android:name="com.example.kai_content.ui.slideshow.SlideshowFragment"
+        android:label="@string/menu_slideshow"
+        tools:layout="@layout/fragment_slideshow" />
+
+    <fragment
+        android:id="@+id/nav_profile"
+        android:name="com.example.kai_content.ui.profile.ProfileFragment"
+        android:label="@string/menu_profile"
+        tools:layout="@layout/fragment_profile" >
+        <action
+        android:id="@+id/action_profileFragment_to_editProfileFragment"
+        app:destination="@id/nav_editProfile" />
+    </fragment>
+
+    <fragment
+        android:id="@+id/nav_editProfile"
+        android:name="com.example.kai_content.ui.profile.EditProfileFragment"
+        android:label="@string/menu_editProfile"
+        tools:layout="@layout/fragment_edit_profile" />
+
+
+<!--    Operator-->
+    <fragment
+        android:id="@+id/nav_complaint_operator"
+        android:name="com.example.kai_content.ui.operator.complaint.OperatorComplaintFragment"
+        android:label="@string/menu_complaint_operator"
+        tools:layout="@layout/fragment_complaint_operator" />
+    <fragment
+        android:id="@+id/nav_content_operator"
+        android:name="com.example.kai_content.ui.operator.content.ContentFragment"
+        android:label="@string/menu_content_operator"
+        tools:layout="@layout/fragment_content_operator" >
+        <action
+            android:id="@+id/action_contentFragment_to_editContenFragment"
+            app:destination="@id/nav_edit_content_operator" />
+        <action
+            android:id="@+id/action_contentFragment_to_createContentFragment"
+            app:destination="@id/nav_create_content_operator" />
+    </fragment>
+
+    <fragment
+        android:id="@+id/nav_create_content_operator"
+        android:name="com.example.kai_content.ui.operator.content.CreateContentFragment"
+        android:label="@string/menu_edit_content_operator"
+        tools:layout="@layout/fragment_create_content_operator" />
+
+    <fragment
+        android:id="@+id/nav_edit_content_operator"
+        android:name="com.example.kai_content.ui.operator.content.EditContenFragment"
+        android:label="@string/menu_edit_content_operator"
+        tools:layout="@layout/fragment_edit_conten_operator" >
+        <argument
+            android:name="content_id"
+            app:argType="string"
+            android:defaultValue="" />
+    </fragment>
+</navigation>
