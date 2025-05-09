@@ -48,9 +48,10 @@ class ProfileViewModel : ViewModel() {
 //                        _userType.value = user.type // Assuming `type` exists in `UserResponse`
                         _profile.value = Profile(
                             name = user.name,
-                            role = user.role, // Atur sesuai data
+                            role = user.role,
                             profilePictureUrl = user.profile_picture ?: ""
                         )
+                        Log.d("ProfileViewModel", "User data fetched successfully: $user")
                     }
                 } else {
                     val errorBody = response.errorBody()?.string()

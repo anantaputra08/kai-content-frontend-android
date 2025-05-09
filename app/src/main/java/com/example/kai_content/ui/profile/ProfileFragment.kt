@@ -13,7 +13,6 @@ import androidx.navigation.fragment.findNavController
 import com.bumptech.glide.Glide
 import com.example.kai_content.LoginActivity
 import com.example.kai_content.R
-import com.example.kai_content.RegisterActivity
 import com.example.kai_content.databinding.FragmentProfileBinding
 
 class ProfileFragment : Fragment() {
@@ -78,6 +77,13 @@ class ProfileFragment : Fragment() {
     }
 
     private fun setupClickListeners() {
+        // Edit profile pict
+        binding.ivProfileImage.setOnClickListener {
+            // Handle profile picture click
+            Toast.makeText(requireContext(), "Profile picture clicked", Toast.LENGTH_SHORT).show()
+            // Add navigation to Edit Profile screen if needed
+        }
+
         // Edit Profile
         binding.cvEditProfile.setOnClickListener {
 //            Toast.makeText(requireContext(), "Edit Profile clicked", Toast.LENGTH_SHORT).show()
@@ -85,17 +91,17 @@ class ProfileFragment : Fragment() {
             findNavController().navigate(R.id.action_profileFragment_to_editProfileFragment)
         }
 
-        // Notifications
-        binding.cvNotification.setOnClickListener {
-            Toast.makeText(requireContext(), "Notifications clicked", Toast.LENGTH_SHORT).show()
-            // Add navigation to Notifications screen if needed
-        }
-
-        // Shipping Address
-        binding.cvShippingAddress.setOnClickListener {
-            Toast.makeText(requireContext(), "Shipping Address clicked", Toast.LENGTH_SHORT).show()
-            // Add navigation to Shipping Address screen if needed
-        }
+//        // Notifications
+//        binding.cvNotification.setOnClickListener {
+//            Toast.makeText(requireContext(), "Notifications clicked", Toast.LENGTH_SHORT).show()
+//            // Add navigation to Notifications screen if needed
+//        }
+//
+//        // Shipping Address
+//        binding.cvShippingAddress.setOnClickListener {
+//            Toast.makeText(requireContext(), "Shipping Address clicked", Toast.LENGTH_SHORT).show()
+//            // Add navigation to Shipping Address screen if needed
+//        }
 
         // Change Password
         binding.cvChangePassword.setOnClickListener {
