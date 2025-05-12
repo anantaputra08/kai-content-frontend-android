@@ -61,15 +61,21 @@ class MainActivity : AppCompatActivity() {
 
             // Untuk hide menu berdasarkan role
             val menu = navView.menu
+            menu.findItem(R.id.nav_home).isVisible = false
+            menu.findItem(R.id.nav_favorite).isVisible = false
             menu.findItem(R.id.nav_slideshow).isVisible = false
             menu.findItem(R.id.nav_complaint).isVisible = false
-            menu.findItem(R.id.nav_home).isVisible = false
             menu.findItem(R.id.nav_complaint_operator).isVisible = true
         } else {
             navController.navigate(R.id.nav_home) // Default fragment untuk non-operator
 
             // Untuk hide menu berdasarkan role
             val menu = navView.menu
+            menu.findItem(R.id.nav_home).isVisible = true
+            menu.findItem(R.id.nav_complaint).isVisible = true
+            menu.findItem(R.id.nav_favorite).isVisible = true
+            menu.findItem(R.id.nav_profile).isVisible = true
+            menu.findItem(R.id.nav_slideshow).isVisible = false
             menu.findItem(R.id.nav_complaint_operator).isVisible = false
             menu.findItem(R.id.nav_content_operator).isVisible = false
         }
