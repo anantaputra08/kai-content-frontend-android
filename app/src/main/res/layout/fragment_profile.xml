@@ -24,7 +24,7 @@
             android:layout_height="wrap_content"
             android:layout_gravity="bottom|end"
             android:layout_margin="4dp"
-            android:backgroundTint="@color/teal_700"
+            android:backgroundTint="@color/primary_color"
             app:fabSize="mini"
             app:srcCompat="@drawable/ic_edit"
             app:tint="@color/white" />
@@ -107,7 +107,7 @@
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintTop_toTopOf="parent"
                 app:srcCompat="@drawable/ic_arrow_right"
-                app:tint="@color/gray" />
+                app:tint="@color/primary_color" />
         </androidx.constraintlayout.widget.ConstraintLayout>
     </com.google.android.material.card.MaterialCardView>
 
@@ -251,7 +251,7 @@
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintTop_toTopOf="parent"
                 app:srcCompat="@drawable/ic_arrow_right"
-                app:tint="@color/gray" />
+                app:tint="@color/primary_color" />
         </androidx.constraintlayout.widget.ConstraintLayout>
     </com.google.android.material.card.MaterialCardView>
 
@@ -260,7 +260,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginTop="32dp"
-        android:backgroundTint="@color/teal_700"
+        android:backgroundTint="@color/primary_color"
         android:padding="12dp"
         android:text="Sign Out"
         android:textAllCaps="false"
