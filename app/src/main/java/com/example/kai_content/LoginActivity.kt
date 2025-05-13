@@ -80,6 +80,7 @@ class LoginActivity : AppCompatActivity() {
                         intent.putExtra("USER_NAME", loginResponse.user.name)
                         intent.putExtra("USER_EMAIL", loginResponse.user.email)
                         intent.putExtra("USER_ROLE", loginResponse.user.role)
+                        intent.putExtra("USER_PROFILE_PICT", loginResponse.user.profile_picture)
                         intent.putExtra("USER_TOKEN", loginResponse.token)
                         startActivity(intent)
                         finish() // Close LoginActivity to prevent returning to it
