@@ -45,19 +45,12 @@ class ContentAdapter(private val onItemClick: (Content) -> Unit) :
             binding.textChannel.text = content.categories?.firstOrNull()?.name ?: "Uncategorized"
             binding.textDetails.text = "${formatViewCount(content.viewCount)} views • ${content.getTimeAgo()}"
 
-            // Load thumbnail image
             Glide.with(binding.imageThumbnail)
                 .load(content.thumbnailUrl)
                 .centerCrop()
                 .placeholder(R.drawable.placeholder_thumbnail)
                 .error(R.drawable.error_thumbnail)
                 .into(binding.imageThumbnail)
-
-            // For channel image, we can use a placeholder or generate one from the category
-//            Glide.with(binding.imageChannel)
-//                .load(R.drawable.ic_account_circle)
-//                .apply(RequestOptions.circleCropTransform())
-//                .into(binding.imageChannel)
         }
 
         private fun formatViewCount(viewCount: Int): String {
