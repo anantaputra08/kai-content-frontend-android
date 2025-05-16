@@ -18,19 +18,30 @@ import retrofit2.http.PartMap
 import retrofit2.http.Path
 
 interface ComplaintApi {
-
+     /*
+     * Endpoint untuk mendapatkan daftar pengaduan
+     */
      @Headers("Accept: application/json")
      @GET("api/complaints/my-complaints")
      suspend fun getComplaints(@Header("Authorization") token: String): Response<List<ComplaintResponse>>
 
+     /*
+     * Endpoint untuk mendapatkan daftar pengaduan untuk operator
+     */
      @Headers("Accept: application/json")
      @GET("api/complaints")
      suspend fun getComplaintsOperator(@Header("Authorization") token: String): Response<List<ComplaintResponse>>
 
+     /*
+        * Endpoint untuk mendapatkan kategori pengaduan
+      */
      @Headers("Accept: application/json")
      @GET("api/complaints/categories")
      suspend fun getCategories(@Header("Authorization") token: String): Response<List<ComplaintCategory>>
 
+     /*
+     * Endpoint untuk mendapatkan detail pengaduan
+     */
      @Multipart
      @Headers("Accept: application/json")
      @POST("api/complaints")
@@ -44,6 +55,9 @@ interface ComplaintApi {
           @Part("resolution_notes") resolutionNotes: RequestBody?
      ): Response<ComplaintResponse>
 
+     /*
+     * Endpoint untuk mengupdate pengaduan
+     */
      @PUT("api/complaints/{id}")
      suspend fun updateComplaint(
           @Header("Authorization") token: String,
