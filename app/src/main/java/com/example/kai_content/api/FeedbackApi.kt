@@ -33,6 +33,14 @@ data class CheckFeedbackResponse(
 )
 
 interface FeedbackApi {
+
+    /**
+     * Mengirimkan umpan balik dari pengguna.
+     *
+     * @param token Token otorisasi untuk autentikasi pengguna.
+     * @param request Objek yang berisi data umpan balik.
+     * @return Respons dari server yang berisi informasi tentang umpan balik yang dikirimkan.
+     */
     @Headers("Accept: application/json")
     @POST("api/feedbacks")
     fun submitFeedback(
@@ -40,6 +48,13 @@ interface FeedbackApi {
         @Body request: FeedbackRequest
     ): Call<FeedbackResponse>
 
+
+    /**
+     * Memeriksa apakah pengguna sudah memberikan umpan balik.
+     *
+     * @param token Token otorisasi untuk autentikasi pengguna.
+     * @return Respons dari server yang berisi informasi tentang status umpan balik pengguna.
+     */
     @Headers("Accept: application/json")
     @GET("api/feedbacks/check")
     fun checkUserFeedback(
