@@ -8,7 +8,6 @@ import retrofit2.http.POST
 import retrofit2.http.Path
 
 interface ReviewApi {
-
     /**
      * Mengirimkan ulasan untuk konten tertentu.
      *
