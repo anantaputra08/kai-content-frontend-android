@@ -17,31 +17,65 @@ import retrofit2.http.Part
 import retrofit2.http.PartMap
 import retrofit2.http.Path
 
+/**
+ * API untuk mengelola pengaduan.
+ *
+ * @see ComplaintResponse
+ * @see ComplaintRequest
+ */
 interface ComplaintApi {
-     /*
-     * Endpoint untuk mendapatkan daftar pengaduan
-     */
+     /**
+      * Mengambil daftar pengaduan pengguna.
+      *
+      * @param token Token otorisasi untuk autentikasi pengguna.
+      * @return Response yang berisi daftar pengaduan pengguna.
+      * @see ComplaintResponse
+      */
      @Headers("Accept: application/json")
      @GET("api/complaints/my-complaints")
-     suspend fun getComplaints(@Header("Authorization") token: String): Response<List<ComplaintResponse>>
+     suspend fun getComplaints(
+          @Header("Authorization") token: String
+     ): Response<List<ComplaintResponse>>
 
-     /*
-     * Endpoint untuk mendapatkan daftar pengaduan untuk operator
-     */
+     /**
+      * Mengambil daftar pengaduan operator.
+      *
+      * @param token Token otorisasi untuk autentikasi pengguna.
+      * @return Response yang berisi daftar pengaduan operator.
+      * @see ComplaintResponse
+      */
      @Headers("Accept: application/json")
      @GET("api/complaints")
-     suspend fun getComplaintsOperator(@Header("Authorization") token: String): Response<List<ComplaintResponse>>
+     suspend fun getComplaintsOperator(
+          @Header("Authorization") token: String
+     ): Response<List<ComplaintResponse>>
 
-     /*
-        * Endpoint untuk mendapatkan kategori pengaduan
+     /**
+      * Mengambil daftar kategori pengaduan.
+      *
+      * @param token Token otorisasi untuk autentikasi pengguna.
+      * @return Response yang berisi daftar kategori pengaduan.
+      * @see ComplaintCategory
       */
      @Headers("Accept: application/json")
      @GET("api/complaints/categories")
-     suspend fun getCategories(@Header("Authorization") token: String): Response<List<ComplaintCategory>>
+     suspend fun getCategories(
+          @Header("Authorization") token: String
+     ): Response<List<ComplaintCategory>>
 
-     /*
-     * Endpoint untuk mendapatkan detail pengaduan
-     */
+     /**
+      * Memposting pengaduan baru.
+      *
+      * @param token Token otorisasi untuk autentikasi pengguna.
+      * @param categoryComplaintId ID kategori pengaduan.
+      * @param description Deskripsi pengaduan.
+      * @param attachment Lampiran pengaduan.
+      * @param assignedTo ID pengguna yang ditugaskan untuk menangani pengaduan.
+      * @param resolutionDate Tanggal penyelesaian pengaduan.
+      * @param resolutionNotes Catatan penyelesaian pengaduan.
+      * @return Response yang berisi hasil pengaduan.
+      * @see ComplaintResponse
+      */
      @Multipart
      @Headers("Accept: application/json")
      @POST("api/complaints")
@@ -55,9 +89,16 @@ interface ComplaintApi {
           @Part("resolution_notes") resolutionNotes: RequestBody?
      ): Response<ComplaintResponse>
 
-     /*
-     * Endpoint untuk mengupdate pengaduan
-     */
+     /**
+      * Mengupdate pengaduan yang sudah ada.
+      *
+      * @param token Token otorisasi untuk autentikasi pengguna.
+      * @param id ID pengaduan yang ingin diupdate.
+      * @param request Objek yang berisi data pengaduan yang diperbarui.
+      * @return Response yang berisi hasil pembaruan pengaduan.
+      * @see ComplaintRequest
+      * @see ComplaintResponse
+      */
      @PUT("api/complaints/{id}")
      suspend fun updateComplaint(
           @Header("Authorization") token: String,
