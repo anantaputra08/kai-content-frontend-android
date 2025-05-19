@@ -22,18 +22,32 @@ import retrofit2.http.PartMap
 import retrofit2.http.Path
 import retrofit2.http.Query
 
+/**
+ * API untuk mengelola konten.
+ *
+ * @see Content
+ * @see ContentResponse
+ * @see ContentsResponse
+ */
 interface ContentApi {
+    /**
+     * Mengambil daftar konten.
+     *
+     * @param token Token otorisasi untuk autentikasi pengguna.
+     * @return Response yang berisi daftar konten.
+     * @see Content
+     */
     @Headers("Accept: application/json")
     @GET("api/contents")
     fun getContents(@Header("Authorization") token: String): Call<List<Content>>
 
-//    @Headers("Accept: application/json")
-//    @GET("api/contents/{id}")
-//    fun getContent(
-//        @Header("Authorization") token: String,
-//        @Path("id") id: String): Call<Content>
     /**
-     * Mengambil data konten berdasarkan ID
+     * Mengambil konten berdasarkan ID.
+     *
+     * @param token Token otorisasi untuk autentikasi pengguna.
+     * @param contentId ID konten yang ingin diambil.
+     * @return Response yang berisi detail konten.
+     * @see ContentResponse
      */
     @Headers("Accept: application/json")
     @GET("api/content/{id}")
@@ -43,16 +57,12 @@ interface ContentApi {
     ): Response<ContentResponse>
 
     /**
-     * Mengambil daftar konten berdasarkan kategori
-     * @Query("category") adalah parameter query untuk kategori
+     * Mengambil konten terkait berdasarkan ID konten.
      *
-     * @Header("Authorization") adalah token otorisasi
-     * @GET("api/contents") adalah endpoint untuk mengambil konten
-     * @Response<ContentsResponse> adalah tipe data yang dikembalikan
-     * @param token adalah token otorisasi
-     * @param contentId adalah ID konten
-     *
-     * @return Response<ContentsResponse> adalah respons dari server dikelompokan dengan kategori
+     * @param token Token otorisasi untuk autentikasi pengguna.
+     * @param contentId ID konten yang ingin diambil.
+     * @return Response yang berisi daftar konten terkait.
+     * @see ContentsResponse
      */
     @Headers("Accept: application/json")
     @GET("api/content/{id}/related")
@@ -62,16 +72,13 @@ interface ContentApi {
     ): Response<ContentsResponse>
 
     /**
-     * Melaporan durasi tonton untuk konten
-     * @Field("watch_time") adalah durasi tonton dalam detik
-     * @Path("id") adalah ID konten
-     * @Header("Authorization") adalah token otorisasi
-     * @POST("api/content/{id}/watch-time") adalah endpoint untuk melaporkan durasi tonton
-     * @FormUrlEncoded digunakan untuk mengirim data dalam format URL-encoded
-     * @Response<Map<String, Any>> adalah tipe data yang dikembalikan
-     * @param token adalah token otorisasi
-     * @param contentId adalah ID konten
-     * @param watchTime adalah durasi tonton dalam detik
+     * Mengirim laporan waktu tonton untuk konten tertentu.
+     *
+     * @param token Token otorisasi untuk autentikasi pengguna.
+     * @param contentId ID konten yang ingin dilaporkan.
+     * @param watchTime Waktu tonton dalam detik.
+     * @return Response yang berisi hasil laporan.
+     * @see Map<String, Any>
      */
     @POST("api/content/{id}/watch-time")
     @FormUrlEncoded
@@ -82,17 +89,14 @@ interface ContentApi {
     ): Response<Map<String, Any>>
 
     /**
-     * Mengirim reaksi untuk konten (like/dislike)
+     * Mengambil daftar konten berdasarkan search.
+     *
+     * @param token Token otorisasi untuk autentikasi pengguna.
+     * @param title Judul konten yang ingin dicari.
+     * @return Response yang berisi daftar konten yang sesuai dengan pencarian.
+     * @see List
+     * @see Content
      */
-//    @POST("api/content/{id}/reaction")
-//    @FormUrlEncoded
-//    suspend fun setReaction(
-//        @Header("Authorization") token: String,
-//        @Path("id") contentId: String,
-//        @Field("reaction") reaction: String, // "like" atau "dislike"
-//        @Field("value") value: Boolean // true untuk add, false untuk remove
-//    ): Response<Map<String, Any>>
-
     @Headers("Accept: application/json")
     @GET("api/contents/search")
     fun searchContents(
@@ -100,6 +104,14 @@ interface ContentApi {
         @Query("title") title: String
     ): Call<List<Content>>
 
+    /**
+     * Mengambil detail konten berdasarkan ID.
+     *
+     * @param token Token otorisasi untuk autentikasi pengguna.
+     * @param id ID konten yang ingin diambil.
+     * @return Response yang berisi detail konten.
+     * @see ContentResponse
+     */
     @Headers("Accept: application/json")
     @GET("api/contents/details/{id}")
     suspend fun getContentById(
@@ -107,9 +119,25 @@ interface ContentApi {
         @Path("id") id: String
     ): Response<ContentResponse>
 
+    /**
+     * Mengupdate konten berdasarkan ID.
+     *
+     * @param token Token otorisasi untuk autentikasi pengguna.
+     * @param id ID konten yang ingin diupdate.
+     * @param method Metode HTTP yang digunakan (PUT).
+     * @param title Judul konten yang ingin diupdate.
+     * @param description Deskripsi konten yang ingin diupdate.
+     * @param status Status konten yang ingin diupdate.
+     * @param categories Kategori konten yang ingin diupdate.
+     * @param file File konten yang ingin diupdate (nullable).
+     * @param thumbnail Thumbnail konten yang ingin diupdate (nullable).
+     * @return Response yang berisi hasil update konten.
+     *
+     * @see Any
+     */
     @Headers("Accept: application/json")
     @Multipart
-    @POST("api/contents/{id}")  // Change to POST if your backend uses _method for method spoofing
+    @POST("api/contents/{id}")
     suspend fun updateContent(
         @Header("Authorization") token: String,
         @Path("id") id: String,
@@ -122,12 +150,32 @@ interface ContentApi {
         @Part thumbnail: MultipartBody.Part?
     ): Response<Any>
 
+    /**
+     * Mengambil semua kategori konten.
+     *
+     * @param token Token otorisasi untuk autentikasi pengguna.
+     * @return Response yang berisi daftar kategori konten.
+     * @see CategoriesResponse
+     */
     @Headers("Accept: application/json")
     @GET("api/categories")
     suspend fun getAllCategories(
         @Header("Authorization") token: String
     ): Response<CategoriesResponse>
 
+    /**
+     * Membuat konten baru.
+     *
+     * @param token Token otorisasi untuk autentikasi pengguna.
+     * @param title Judul konten yang ingin dibuat.
+     * @param description Deskripsi konten yang ingin dibuat (nullable).
+     * @param status Status konten yang ingin dibuat.
+     * @param file File konten yang ingin dibuat.
+     * @param thumbnail Thumbnail konten yang ingin dibuat (nullable).
+     * @param categories Kategori konten yang ingin dibuat (nullable).
+     * @return Response yang berisi hasil pembuatan konten.
+     * @see ContentResponse
+     */
     @Multipart
     @Headers("Accept: application/json")
     @POST("api/contents")
@@ -138,9 +186,6 @@ interface ContentApi {
         @Part("status") status: RequestBody,
         @Part file: MultipartBody.Part,
         @Part thumbnail: MultipartBody.Part?,
-//        @Part categoryIds: List<MultipartBody.Part> = emptyList()
         @Part("categories") categories: RequestBody?,
     ): Response<ContentResponse>
-
-
 }
