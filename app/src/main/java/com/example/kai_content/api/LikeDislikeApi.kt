@@ -11,13 +11,18 @@ import retrofit2.http.Headers
 import retrofit2.http.POST
 import retrofit2.http.Path
 
+/**
+ * API untuk mengelola reaksi suka/tidak suka pada konten.
+ *
+ * @see LikeDislikeResponse
+ */
 interface LikeDislikeApi {
-
     /**
      * Mengambil daftar konten yang ditandai sebagai suka/tidak suka.
      *
      * @param token Token otorisasi untuk autentikasi pengguna.
      * @return Response yang berisi daftar konten suka/tidak suka.
+     * @see LikeDislikeResponse
      */
     @Headers("Accept: application/json")
     @GET("api/like-dislike/check/{id}")
@@ -32,6 +37,7 @@ interface LikeDislikeApi {
      *
      * @param token Token otorisasi untuk autentikasi pengguna.
      * @return Response yang berisi daftar konten suka/tidak suka.
+     * @see Map
      */
     @Headers("Accept: application/json")
     @POST("api/like-dislike/{id}")
