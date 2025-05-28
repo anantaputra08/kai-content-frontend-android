@@ -7,6 +7,13 @@ import retrofit2.http.Headers
 import retrofit2.http.POST
 import retrofit2.http.Path
 
+/**
+ * API untuk mengelola ulasan konten.
+ *
+ * @see ReviewRequest
+ * @see ReviewResponse
+ * @see CheckReviewResponse
+ */
 interface ReviewApi {
     /**
      * Mengirimkan ulasan untuk konten tertentu.
@@ -14,6 +21,7 @@ interface ReviewApi {
      * @param token Token otorisasi untuk autentikasi pengguna.
      * @param request Data ulasan yang akan dikirimkan.
      * @return Response yang berisi hasil pengiriman ulasan.
+     * @see ReviewResponse
      */
     @Headers("Accept: application/json")
     @POST("api/reviews")
@@ -28,6 +36,7 @@ interface ReviewApi {
      * @param token Token otorisasi untuk autentikasi pengguna.
      * @param contentId ID konten yang ingin diperiksa.
      * @return Response yang berisi informasi tentang status ulasan pengguna.
+     * @see CheckReviewResponse
      */
     @Headers("Accept: application/json")
     @GET("api/reviews/check/{content_id}")
