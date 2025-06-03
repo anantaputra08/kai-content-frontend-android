@@ -70,6 +70,10 @@ dependencies {
 
     // ExoPlayer dependency
     implementation ("com.google.android.exoplayer:exoplayer:2.19.1")
+    implementation ("com.google.android.exoplayer:exoplayer-hls:2.19.1")
+
+    // Coil for image loading
+    implementation("io.coil-kt:coil:2.4.0")
 
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
