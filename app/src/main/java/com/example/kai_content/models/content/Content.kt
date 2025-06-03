@@ -5,6 +5,37 @@ import com.google.gson.annotations.SerializedName
 import kotlinx.parcelize.Parcelize
 import java.util.Date
 
+/**
+ * Model data untuk konten.
+ *
+ * @param id ID konten.
+ * @param title Judul konten.
+ * @param description Deskripsi konten (nullable).
+ * @param filePath Jalur file konten.
+ * @param thumbnailPath Jalur thumbnail konten (nullable).
+ * @param type Jenis konten (nullable).
+ * @param status Status konten.
+ * @param viewCount Jumlah tampilan konten.
+ * @param totalWatchTime Total waktu tonton konten (nullable).
+ * @param rank Peringkat konten (nullable).
+ * @param like Jumlah suka pada konten.
+ * @param dislike Jumlah tidak suka pada konten.
+ * @param videoUrl URL video konten.
+ * @param thumbnailUrl URL thumbnail konten.
+ * @param isLike Status suka pada konten (default: false).
+ * @param isDislike Status tidak suka pada konten (default: false).
+ * @param isFavorite Status favorit pada konten (default: false).
+ * @param createdAt Tanggal dan waktu pembuatan konten.
+ * @param updatedAt Tanggal dan waktu pembaruan konten.
+ * @param categories Daftar kategori yang terkait dengan konten (nullable).
+ *
+ * @see Parcelize
+ * @see Parcelable
+ * @see SerializedName
+ * @see Date
+ * @see Category
+ * @see CategoryPivot
+ */
 @Parcelize
 data class Content(
     val id: Int,
@@ -37,6 +68,13 @@ data class Content(
     val categories: List<Category>?
 ) : Parcelable {
 
+    /**
+     * Menghitung waktu yang telah berlalu sejak konten dibuat.
+     *
+     * @return String yang menunjukkan waktu yang telah berlalu (misalnya, "Hari ini", "Kemarin", "X hari yang lalu").
+     *
+     * @see Date
+     */
     fun getTimeAgo(): String {
         val now = Date()
         val diffInMillis = now.time - createdAt.time
@@ -52,6 +90,19 @@ data class Content(
     }
 }
 
+/**
+ * Model data untuk kategori konten.
+ *
+ * @param id ID kategori.
+ * @param name Nama kategori.
+ * @param createdAt Tanggal dan waktu pembuatan kategori.
+ * @param updatedAt Tanggal dan waktu pembaruan kategori.
+ * @param pivot Objek pivot yang menghubungkan konten dengan kategori (nullable).
+ *
+ * @see Parcelize
+ * @see Parcelable
+ * @see CategoryPivot
+ */
 @Parcelize
 data class Category(
     val id: Int,
@@ -63,6 +114,18 @@ data class Category(
     val pivot: CategoryPivot?
 ) : Parcelable
 
+/**
+ * Model data untuk pivot kategori konten.
+ *
+ * @param contentId ID konten yang terhubung dengan kategori.
+ * @param categoryId ID kategori yang terhubung dengan konten.
+ *
+ * @see Parcelize
+ * @see Parcelable
+ * @see SerializedName
+ * @see Content
+ * @see Category
+ */
 @Parcelize
 data class CategoryPivot(
     @SerializedName("content_id")
@@ -71,18 +134,45 @@ data class CategoryPivot(
     val categoryId: Int
 ) : Parcelable
 
+/**
+ * Model data untuk respons konten.
+ *
+ * @param status Status respons.
+ * @param message Pesan dari server.
+ * @param data Objek konten yang diminta.
+ *
+ * @see Content
+ */
 data class ContentResponse(
     val status: String,
     val message: String,
     val data: Content
 )
 
+/**
+ * Model data untuk respons daftar konten.
+ *
+ * @param status Status respons.
+ * @param message Pesan dari server.
+ * @param data Daftar objek konten.
+ *
+ * @see Content
+ */
 data class ContentsResponse(
     val status: String,
     val message: String,
     val data: List<Content>
 )
 
+/**
+ * Model data untuk respons kategori konten.
+ *
+ * @param status Status respons.
+ * @param message Pesan dari server.
+ * @param data Daftar objek kategori.
+ *
+ * @see Category
+ */
 data class CategoriesResponse(
     val status: String,
     val message: String,
