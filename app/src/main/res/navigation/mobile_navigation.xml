@@ -3,7 +3,7 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/mobile_navigation"
-    app:startDestination="@+id/nav_home">
+    app:startDestination="@+id/nav_home2">
 
     <fragment
         android:id="@+id/nav_home"
@@ -14,7 +14,24 @@
             android:id="@+id/action_homeFragment_to_showContentFragment"
             app:destination="@id/nav_showContent" />
     </fragment>
-
+    <fragment
+        android:id="@+id/nav_home2"
+        android:name="com.example.kai_content.ui.home2.Home2Fragment"
+        android:label="Home2"
+        tools:layout="@layout/fragment_home2" >
+        <action
+            android:id="@+id/action_home2Fragment_to_StreamFragment"
+            app:destination="@id/nav_streaming" />
+    </fragment>
+    <fragment
+        android:id="@+id/nav_streaming"
+        android:name="com.example.kai_content.ui.stream.StreamFragment"
+        android:label="Streaming"
+        tools:layout="@layout/fragment_stream" >
+        <argument
+            android:name="trainCarNumber"
+            app:argType="string" />
+    </fragment>
 
     <fragment
         android:id="@+id/nav_showContent"

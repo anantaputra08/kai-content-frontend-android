@@ -6,11 +6,12 @@
         <domain includeSubdomains="true">192.168.100.133</domain>
         <domain includeSubdomains="true">192.168.0.163</domain>
         <domain includeSubdomains="true">192.168.100.172</domain>
-        <domain includeSubdomains="true">192.168.1.73</domain>
-        <domain includeSubdomains="true">192.168.1.164</domain>
+        <domain includeSubdomains="true">192.168.18.20</domain>
+        <domain includeSubdomains="true">192.168.1.24</domain>
         <domain includeSubdomains="true">192.168.1.8</domain>
-        <domain includeSubdomains="true">192.168.18.66</domain>
-        <domain includeSubdomains="true">192.168.10.195</domain>
+        <domain includeSubdomains="true">192.168.110.104</domain>
+        <domain includeSubdomains="true">192.168.0.101</domain>
+        <domain includeSubdomains="true">192.168.88.29</domain>
         <trust-anchors>
             <certificates src="system" />
         </trust-anchors>

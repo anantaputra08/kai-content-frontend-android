@@ -94,7 +94,7 @@
                     android:id="@+id/train_car_input_layout"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:hint="Contoh: A1, B2, C3"
+                    android:hint="Contoh: 1, 2, 3"
                     app:boxStrokeColor="@color/primary_color"
                     app:boxStrokeWidth="2dp"
                     app:boxCornerRadiusTopStart="12dp"
@@ -122,7 +122,7 @@
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="Format: Huruf diikuti angka (A1, B2, dll.)"
+                    android:text="Format: Huruf diikuti angka (1, 2, dll.)"
                     android:textSize="12sp"
                     android:textColor="@color/hint_text"
                     android:layout_marginTop="4dp"

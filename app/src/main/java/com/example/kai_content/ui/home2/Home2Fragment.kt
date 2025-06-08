@@ -1,28 +1,19 @@
 package com.example.kai_content.ui.home2
 
-import androidx.fragment.app.viewModels
 import android.os.Bundle
-import android.util.Log
-import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
-import com.example.kai_content.R
+import androidx.fragment.app.Fragment
+import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.findNavController
+import com.example.kai_content.R
 import com.google.android.material.textfield.TextInputEditText
 
 class Home2Fragment : Fragment() {
 
-    companion object {
-        fun newInstance() = Home2Fragment()
-    }
-
     private val viewModel: Home2ViewModel by viewModels()
-
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-    }
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -34,18 +25,22 @@ class Home2Fragment : Fragment() {
         val inputField = view.findViewById<TextInputEditText>(R.id.train_car_input)
 
         btnNext.setOnClickListener {
-            val inputValue = inputField.text?.toString() ?: ""
+            val inputValue = inputField.text?.toString()
 
-            // Debug: pastikan input tidak kosong
-            Log.d("Home2Fragment", "Sending trainCarNumber: $inputValue")
+            // 1. Konversi input String menjadi Long (aman jika input kosong atau bukan angka)
+            val carriageId = inputValue?.toLongOrNull()
 
-            if (inputValue.isNotEmpty()) {
+            if (carriageId != null) {
+                // 2. Buat Bundle dengan tipe data dan kunci yang benar
                 val bundle = Bundle().apply {
-                    putString("trainCarNumber", inputValue) // Key harus sama dengan yang di StreamFragment
+                    // Gunakan kunci "carriage_id" dan tipe data Long
+                    putLong("carriage_id", carriageId)
                 }
+                // 3. Navigasi ke StreamFragment dengan Bundle yang sudah benar
                 findNavController().navigate(R.id.action_home2Fragment_to_StreamFragment, bundle)
             } else {
-                Toast.makeText(requireContext(), "Masukkan nomor gerbong terlebih dahulu", Toast.LENGTH_SHORT).show()
+                // Tampilkan pesan jika input tidak valid
+                Toast.makeText(requireContext(), "Masukkan nomor gerbong yang valid", Toast.LENGTH_SHORT).show()
             }
         }
 

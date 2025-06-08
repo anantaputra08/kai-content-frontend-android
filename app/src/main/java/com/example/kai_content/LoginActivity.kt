@@ -72,7 +72,7 @@ class LoginActivity : AppCompatActivity() {
                         val sharedPreferences = getSharedPreferences("AppPreferences", MODE_PRIVATE)
                         val editor = sharedPreferences.edit()
                         editor.putString("auth_token", loginResponse.token)
-                        editor.apply() // Save changes asynchronously
+                        editor.apply()
 
                         // Navigate to MainActivity
                         val intent = Intent(this@LoginActivity, MainActivity::class.java)

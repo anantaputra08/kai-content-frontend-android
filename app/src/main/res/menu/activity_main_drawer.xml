@@ -9,6 +9,10 @@
             android:icon="@drawable/ic_menu_camera"
             android:title="@string/menu_home" />
         <item
+            android:id="@+id/nav_home2"
+            android:icon="@drawable/ic_menu_camera"
+            android:title="Stream" />
+        <item
             android:id="@+id/nav_complaint"
             android:icon="@drawable/ic_menu_gallery"
             android:title="@string/menu_complaint" />
@@ -32,6 +36,5 @@
             android:id="@+id/nav_profile"
             android:icon="@drawable/ic_menu_slideshow"
             android:title="@string/menu_profile" />
-
     </group>
 </menu>

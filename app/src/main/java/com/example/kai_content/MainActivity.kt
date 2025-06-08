@@ -35,26 +35,19 @@ class MainActivity : AppCompatActivity() {
 
         setSupportActionBar(binding.appBarMain.toolbar)
 
-//        binding.appBarMain.fab.setOnClickListener { view ->
-//            Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
-//                .setAction("Action", null)
-//                .setAnchorView(R.id.fab).show()
-//        }
         val drawerLayout: DrawerLayout = binding.drawerLayout
         val navView: NavigationView = binding.navView
         val navController = findNavController(R.id.nav_host_fragment_content_main)
-        // Passing each menu ID as a set of Ids because each
-        // menu should be considered as top level destinations.
+
         appBarConfiguration = AppBarConfiguration(
             setOf(
-                R.id.nav_home, R.id.nav_complaint, R.id.nav_slideshow, R.id.nav_profile,
+                R.id.nav_home2,R.id.nav_complaint, R.id.nav_slideshow, R.id.nav_profile,
                 R.id.nav_complaint_operator, R.id.nav_content_operator
             ), drawerLayout
         )
         setupActionBarWithNavController(navController, appBarConfiguration)
         navView.setupWithNavController(navController)
 
-        // Get the username and email from the Intent extras
         val userName = intent.getStringExtra("USER_NAME")
         val userEmail = intent.getStringExtra("USER_EMAIL")
         val userRole = intent.getStringExtra("USER_ROLE")
@@ -78,13 +71,12 @@ class MainActivity : AppCompatActivity() {
             menu.findItem(R.id.nav_complaint).isVisible = false
             menu.findItem(R.id.nav_complaint_operator).isVisible = true
         } else {
-            navController.navigate(R.id.nav_home) // Default fragment untuk non-operator
+            navController.navigate(R.id.nav_home2)
 
-            // Untuk hide menu berdasarkan role
             val menu = navView.menu
-            menu.findItem(R.id.nav_home).isVisible = true
-            menu.findItem(R.id.nav_complaint).isVisible = true
-            menu.findItem(R.id.nav_favorite).isVisible = true
+            menu.findItem(R.id.nav_home).isVisible = false
+            menu.findItem(R.id.nav_complaint).isVisible = false
+            menu.findItem(R.id.nav_favorite).isVisible = false
             menu.findItem(R.id.nav_profile).isVisible = true
             menu.findItem(R.id.nav_slideshow).isVisible = false
             menu.findItem(R.id.nav_complaint_operator).isVisible = false

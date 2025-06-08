@@ -17,7 +17,6 @@
         android:orientation="horizontal"
         android:padding="12dp">
 
-        <!-- Video Thumbnail -->
         <androidx.cardview.widget.CardView
             android:layout_width="120dp"
             android:layout_height="68dp"
@@ -30,7 +29,6 @@
                 android:scaleType="centerCrop"
                 tools:src="@tools:sample/backgrounds/scenic" />
 
-            <!-- Duration Badge -->
             <TextView
                 android:id="@+id/text_video_duration"
                 android:layout_width="wrap_content"
@@ -47,7 +45,6 @@
 
         </androidx.cardview.widget.CardView>
 
-        <!-- Video Info -->
         <LinearLayout
             android:layout_width="0dp"
             android:layout_height="wrap_content"
@@ -55,7 +52,6 @@
             android:layout_weight="1"
             android:orientation="vertical">
 
-            <!-- Video Title -->
             <TextView
                 android:id="@+id/text_video_title"
                 android:layout_width="match_parent"
@@ -67,7 +63,6 @@
                 android:textStyle="bold"
                 tools:text="How to Build Amazing Android Apps - Complete Tutorial" />
 
-            <!-- Channel Name -->
             <TextView
                 android:id="@+id/text_channel_name"
                 android:layout_width="match_parent"
@@ -77,49 +72,43 @@
                 android:maxLines="1"
                 android:textColor="#606060"
                 android:textSize="12sp"
-                tools:text="Tech Channel" />
+                tools:text="Video description goes here" /> <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:gravity="center_vertical"
+            android:orientation="horizontal">
 
-            <!-- Vote Stats -->
-            <LinearLayout
-                android:layout_width="match_parent"
+            <TextView
+                android:id="@+id/text_vote_count"
+                android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="8dp"
+                android:layout_weight="1"
+                android:drawablePadding="4dp"
                 android:gravity="center_vertical"
-                android:orientation="horizontal">
+                android:text="24 votes"
+                android:textColor="@color/primary_color"
+                android:textSize="12sp"
+                android:textStyle="bold"
+                app:drawableStartCompat="@android:drawable/ic_menu_sort_by_size"
+                app:drawableTint="@color/primary_color" />
 
-                <!-- Vote Count -->
-                <TextView
-                    android:id="@+id/text_vote_count"
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:drawablePadding="4dp"
-                    android:gravity="center_vertical"
-                    android:text="24 votes"
-                    android:textColor="@color/primary_color"
-                    android:textSize="12sp"
-                    android:textStyle="bold"
-                    app:drawableStartCompat="@android:drawable/ic_menu_sort_by_size"
-                    app:drawableTint="@color/primary_color" />
-
-                <!-- Vote Percentage -->
-                <TextView
-                    android:id="@+id/text_vote_percentage"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:background="@drawable/percentage_background"
-                    android:paddingHorizontal="8dp"
-                    android:paddingVertical="2dp"
-                    android:text="45%"
-                    android:textColor="@android:color/white"
-                    android:textSize="11sp"
-                    android:textStyle="bold" />
-
-            </LinearLayout>
+            <TextView
+                android:id="@+id/text_vote_percentage"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:background="@drawable/percentage_background"
+                android:paddingHorizontal="8dp"
+                android:paddingVertical="2dp"
+                android:text="45%"
+                android:textColor="@android:color/white"
+                android:textSize="11sp"
+                android:textStyle="bold" />
 
         </LinearLayout>
 
-        <!-- Vote Button -->
+        </LinearLayout>
+
         <LinearLayout
             android:id="@+id/btn_vote"
             android:layout_width="wrap_content"
@@ -156,7 +145,6 @@
 
     </LinearLayout>
 
-    <!-- Vote Progress Bar -->
     <ProgressBar
         android:id="@+id/progress_vote"
         style="?android:attr/progressBarStyleHorizontal"
