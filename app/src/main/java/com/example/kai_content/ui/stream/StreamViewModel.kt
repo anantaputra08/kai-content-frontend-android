@@ -26,17 +26,15 @@ class StreamViewModel : ViewModel() {
         RetrofitClient.instance.create(StreamApi::class.java)
     }
 
-    // BARU: Menyimpan ID carriage saat ini agar bisa digunakan untuk polling
     private var currentCarriageId: Long? = null
 
-    // Data untuk UI
     private val _streamStatus = MutableLiveData<StreamStatusViewModelData?>()
     val streamStatus: LiveData<StreamStatusViewModelData?> = _streamStatus
 
     private val _activeVoting = MutableLiveData<Voting?>()
     val activeVoting: LiveData<Voting?> = _activeVoting
 
-    private val _carriage = MutableLiveData<Carriage?>() // BARU: LiveData untuk info carriage
+    private val _carriage = MutableLiveData<Carriage?>()
     val carriage: LiveData<Carriage?> = _carriage
 
     private val _votingTimeLeft = MutableLiveData<String>()
@@ -51,7 +49,6 @@ class StreamViewModel : ViewModel() {
     private var votingCountdownTimer: Timer? = null
     private var periodicUpdateJob: Job? = null
 
-    // Data class ini hanya untuk merapikan data stream yang akan ditampilkan di UI
     data class StreamStatusViewModelData(
         val displayContent: ContentInfo,
         val streamUrl: String?,
@@ -60,40 +57,29 @@ class StreamViewModel : ViewModel() {
         val countdownSeconds: Double?
     )
 
-    /**
-     * FUNGSI BARU: Ini adalah titik masuk utama dari UI (Fragment/Activity).
-     * Panggil fungsi ini sekali saat layar pertama kali dibuka.
-     */
     fun loadDataForCarriage(carriageId: Long) {
-        // Hanya jalankan jika ini adalah permintaan pertama atau ID carriage berubah
         if (currentCarriageId == carriageId) return
         currentCarriageId = carriageId
 
-        // Batalkan job lama jika ada, lalu mulai polling baru
         periodicUpdateJob?.cancel()
         startPeriodicUpdates(carriageId)
     }
 
-    /**
-     * DIUBAH: Fungsi ini sekarang private dan mengambil data lengkap dalam satu panggilan.
-     */
     private fun fetchStatus(carriageId: Long) {
         viewModelScope.launch {
             try {
-                // Panggil API dengan carriageId
                 val response = apiService.getStreamStatus(carriageId)
                 if (response.isSuccessful) {
                     val status = response.body()
-                    _error.value = null // Hapus error lama jika sukses
+                    _error.value = null
 
-                    // 1. Update info Carriage
+                    // Set the current carriage ID
                     _carriage.value = status?.carriage
 
-                    // 2. Update status Stream (Live atau Jadwal Berikutnya)
+                    // Update the stream status
                     handleStreamResponse(status?.nowPlaying)
 
-                    // 3. Update status Voting
-                    // LOGIKA BARU: Langsung gunakan data voting dari status, jangan panggil API lain
+                    // Update the active voting
                     handleVotingResponse(status?.activeVoting)
 
                 } else {
@@ -103,7 +89,7 @@ class StreamViewModel : ViewModel() {
                 _error.value = "Kesalahan jaringan: ${e.message}"
                 e.printStackTrace()
             } finally {
-                _isLoading.value = false // Sembunyikan loading indicator setelah fetch pertama selesai
+                _isLoading.value = false
             }
         }
     }
@@ -137,46 +123,39 @@ class StreamViewModel : ViewModel() {
         }
     }
 
+    // Handle the active voting state
     private fun handleVotingResponse(newVoting: Voting?) {
         val oldVoting = _activeVoting.value
 
-        // Kasus 1: Voting telah berakhir (data baru null, data lama ada)
         if (newVoting == null) {
             if (oldVoting != null) {
                 _activeVoting.value = null
                 votingCountdownTimer?.cancel()
                 votingCountdownTimer = null
-                _votingTimeLeft.value = "" // Kosongkan teks timer
+                _votingTimeLeft.value = ""
             }
-            return // Selesai, tidak ada yang perlu dilakukan lagi
+            return
         }
 
-        // --- Dari sini, kita tahu newVoting tidak null ---
-
-        // Kasus 2: Sesi voting BARU telah dimulai (ID-nya berbeda dari yang lama)
-        // Ini adalah logika kunci untuk me-reset timer.
+        // Update voting time left
         if (oldVoting?.id != newVoting.id) {
-            _activeVoting.value = newVoting // Update UI dengan data voting baru
-            startVotingCountdown(newVoting.endTime) // Paksa mulai countdown baru
+            _activeVoting.value = newVoting
+            startVotingCountdown(newVoting.endTime)
         }
-        // Kasus 3: Ini adalah sesi voting yang sama, tapi ada update (misal: jumlah vote bertambah)
+
+        // Update voting data
         else if (oldVoting.totalVotes != newVoting.totalVotes) {
-            _activeVoting.value = newVoting // Cukup update datanya, jangan sentuh timer
+            _activeVoting.value = newVoting
         }
     }
 
-    /**
-     * DIHAPUS: Fungsi ini tidak lagi dibutuhkan karena getStreamStatus sudah lengkap.
-     */
-    // private fun fetchDetailedActiveVoting(votingId: Long) { ... }
-
+    // Submit a vote for the given option ID
     fun submitVote(optionId: Long) {
         val carriageId = currentCarriageId ?: run {
             _error.value = "Carriage ID tidak ditemukan."
             return
         }
-        // ... (Fungsi submitVote tidak perlu banyak perubahan, tapi pastikan loading state ditangani)
-        // ... (Kode submitVote yang Anda miliki sebelumnya sudah cukup baik)
+
         viewModelScope.launch {
             _isLoading.value = true
             try {
@@ -184,7 +163,7 @@ class StreamViewModel : ViewModel() {
                 if (!response.isSuccessful) {
                     _error.value = response.errorBody()?.string() ?: "Gagal melakukan vote"
                 }
-                // Setelah vote, langsung panggil fetchStatus untuk dapat data terbaru
+
                 fetchStatus(carriageId)
             } catch (e: Exception) {
                 _error.value = "Kesalahan jaringan saat vote: ${e.message}"
@@ -198,20 +177,18 @@ class StreamViewModel : ViewModel() {
         periodicUpdateJob = viewModelScope.launch {
             while (true) {
                 fetchStatus(carriageId)
-                delay(15_000) // Poll setiap 15 detik
+                // Post every 15 seconds
+                delay(15_000)
             }
         }
     }
 
     private fun startVotingCountdown(endTimeString: String) {
-        // Selalu batalkan timer lama sebelum membuat yang baru untuk memastikan kebersihan state
         votingCountdownTimer?.cancel()
         votingCountdownTimer = Timer()
 
         try {
-            // Menggunakan parser yang lebih robust untuk format ISO 8601 dari Laravel
             val format = SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ssZ", Locale.US)
-            // Mengganti format timezone agar bisa di-parse
             val parsableDateString = endTimeString.replace("Z", "+0000").replace("+07:00", "+0700")
             val endTime = format.parse(parsableDateString) ?: return
 
@@ -220,7 +197,6 @@ class StreamViewModel : ViewModel() {
                     val timeDiff = endTime.time - Date().time
                     if (timeDiff <= 0) {
                         _votingTimeLeft.postValue("Selesai")
-                        // PENTING: Bersihkan timer setelah selesai
                         cancel()
                         votingCountdownTimer = null
                     } else {
@@ -233,11 +209,12 @@ class StreamViewModel : ViewModel() {
         } catch (e: Exception) {
             _error.postValue("Gagal memproses waktu voting: ${e.message}")
             votingCountdownTimer?.cancel()
-            votingCountdownTimer = null // Pastikan dibersihkan jika ada error
+            votingCountdownTimer = null
             e.printStackTrace()
         }
     }
 
+    // Clear resources when ViewModel is cleared
     override fun onCleared() {
         super.onCleared()
         votingCountdownTimer?.cancel()

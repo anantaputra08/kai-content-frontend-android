@@ -38,23 +38,23 @@ data class ContentInfo(
     @SerializedName("description")
     val description: String?,
     @SerializedName("duration_seconds")
-    val durationSeconds: Int? // Added this field
+    val durationSeconds: Int?
 )
 
 data class StreamResponse(
     @SerializedName("content")
-    val content: ContentInfo, // Ini adalah konten yang SEDANG tayang
+    val content: ContentInfo,
     @SerializedName("stream_url")
     val streamUrl: String?,
     @SerializedName("sync_data")
     val syncData: SyncData?,
     @SerializedName("is_live")
     val isLive: Boolean,
-    @SerializedName("next_content") // Ini adalah konten yang AKAN tayang
+    @SerializedName("next_content")
     val nextContent: NextContentInStreamResponse?
 )
 
-data class NextContentInStreamResponse( // PERBAIKI DATA CLASS INI
+data class NextContentInStreamResponse(
     @SerializedName("id")
     val id: Long,
     @SerializedName("title")
@@ -65,9 +65,9 @@ data class NextContentInStreamResponse( // PERBAIKI DATA CLASS INI
     val scheduledTime: String,
     @SerializedName("countdown_seconds")
     val countdownSeconds: Double?,
-    @SerializedName("description") // <--- TAMBAH INI
+    @SerializedName("description")
     val description: String?,
-    @SerializedName("duration_seconds") // <--- TAMBAH INI
+    @SerializedName("duration_seconds")
     val durationSeconds: Int?
 )
 
@@ -93,11 +93,11 @@ data class Voting(
     @SerializedName("description")
     val description: String?,
     @SerializedName("end_time")
-    val endTime: String, // non-nullable
+    val endTime: String,
     @SerializedName("total_votes")
     val totalVotes: Int,
     @SerializedName("has_voted")
-    val hasVoted: Boolean, // non-nullable
+    val hasVoted: Boolean,
     @SerializedName("options")
     val options: List<VotingOption>
 )
@@ -106,14 +106,13 @@ data class VotingOption(
     @SerializedName("id")
     val id: Long,
     @SerializedName("content")
-    val content: ContentInfo, // Use ContentInfo directly
+    val content: ContentInfo,
     @SerializedName("vote_count")
     val voteCount: Int,
     @SerializedName("vote_percentage")
-    val votePercentage: Int // Should be integer percentage
+    val votePercentage: Int
 )
 
-// Vote Submit Models
 data class VoteResponse(
     @SerializedName("message")
     val message: String,
@@ -121,11 +120,11 @@ data class VoteResponse(
     val optionId: Long,
     @SerializedName("new_vote_count")
     val newVoteCount: Int,
-    @SerializedName("updated_voting_options") // Added this to directly update UI
+    @SerializedName("updated_voting_options")
     val updatedVotingOptions: List<VotingOptionUpdate>?
 )
 
-data class VotingOptionUpdate( // New data class for updated vote counts
+data class VotingOptionUpdate(
     @SerializedName("id")
     val id: Long,
     @SerializedName("vote_count")
@@ -134,14 +133,13 @@ data class VotingOptionUpdate( // New data class for updated vote counts
     val votePercentage: Int
 )
 
-// Stream Status Response (Main endpoint for client sync)
 data class StreamStatusResponse(
     @SerializedName("now_playing")
-    val nowPlaying: StreamResponse?, // Can be null if no stream is active or scheduled
+    val nowPlaying: StreamResponse?,
     @SerializedName("active_voting")
     val activeVoting: Voting?,
     @SerializedName("carriage")
     val carriage: Carriage?,
     @SerializedName("server_time")
-    val serverTime: String // Include server time for client-side sync if needed
+    val serverTime: String
 )

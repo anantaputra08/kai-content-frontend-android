@@ -27,23 +27,17 @@ class Home2Fragment : Fragment() {
         btnNext.setOnClickListener {
             val inputValue = inputField.text?.toString()
 
-            // 1. Konversi input String menjadi Long (aman jika input kosong atau bukan angka)
             val carriageId = inputValue?.toLongOrNull()
 
             if (carriageId != null) {
-                // 2. Buat Bundle dengan tipe data dan kunci yang benar
                 val bundle = Bundle().apply {
-                    // Gunakan kunci "carriage_id" dan tipe data Long
                     putLong("carriage_id", carriageId)
                 }
-                // 3. Navigasi ke StreamFragment dengan Bundle yang sudah benar
                 findNavController().navigate(R.id.action_home2Fragment_to_StreamFragment, bundle)
             } else {
-                // Tampilkan pesan jika input tidak valid
                 Toast.makeText(requireContext(), "Masukkan nomor gerbong yang valid", Toast.LENGTH_SHORT).show()
             }
         }
-
         return view
     }
 }
