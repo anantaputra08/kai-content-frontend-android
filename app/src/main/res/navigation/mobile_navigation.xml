@@ -17,7 +17,7 @@
     <fragment
         android:id="@+id/nav_home2"
         android:name="com.example.kai_content.ui.home2.Home2Fragment"
-        android:label="Home2"
+        android:label="Streaming"
         tools:layout="@layout/fragment_home2" >
         <action
             android:id="@+id/action_home2Fragment_to_StreamFragment"

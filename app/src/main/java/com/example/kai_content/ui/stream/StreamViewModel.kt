@@ -57,6 +57,7 @@ class StreamViewModel : ViewModel() {
         val countdownSeconds: Double?
     )
 
+    // Load data for a specific carriage ID
     fun loadDataForCarriage(carriageId: Long) {
         if (currentCarriageId == carriageId) return
         currentCarriageId = carriageId
@@ -65,6 +66,7 @@ class StreamViewModel : ViewModel() {
         startPeriodicUpdates(carriageId)
     }
 
+    // Fetch the current status of the stream for the given carriage ID
     private fun fetchStatus(carriageId: Long) {
         viewModelScope.launch {
             try {
@@ -94,9 +96,12 @@ class StreamViewModel : ViewModel() {
         }
     }
 
+    // Handle the stream response and update the LiveData
     private fun handleStreamResponse(nowPlaying: com.example.kai_content.api.StreamResponse?) {
+        val newStatus: StreamStatusViewModelData?
+
         if (nowPlaying?.isLive == true) {
-            _streamStatus.value = StreamStatusViewModelData(
+            newStatus = StreamStatusViewModelData(
                 displayContent = nowPlaying.content,
                 streamUrl = nowPlaying.streamUrl,
                 isLive = true,
@@ -105,7 +110,7 @@ class StreamViewModel : ViewModel() {
             )
         } else if (nowPlaying?.nextContent != null) {
             val nextContent = nowPlaying.nextContent
-            _streamStatus.value = StreamStatusViewModelData(
+            newStatus = StreamStatusViewModelData(
                 displayContent = ContentInfo(
                     id = nextContent.id,
                     title = nextContent.title,
@@ -119,7 +124,11 @@ class StreamViewModel : ViewModel() {
                 countdownSeconds = nextContent.countdownSeconds
             )
         } else {
-            _streamStatus.value = null
+            newStatus = null
+        }
+
+        if (_streamStatus.value != newStatus) {
+            _streamStatus.value = newStatus
         }
     }
 
@@ -173,6 +182,7 @@ class StreamViewModel : ViewModel() {
         }
     }
 
+    // Start periodic updates every 15 seconds
     private fun startPeriodicUpdates(carriageId: Long) {
         periodicUpdateJob = viewModelScope.launch {
             while (true) {
@@ -183,6 +193,7 @@ class StreamViewModel : ViewModel() {
         }
     }
 
+    // Start the voting countdown timer based on the end time string
     private fun startVotingCountdown(endTimeString: String) {
         votingCountdownTimer?.cancel()
         votingCountdownTimer = Timer()

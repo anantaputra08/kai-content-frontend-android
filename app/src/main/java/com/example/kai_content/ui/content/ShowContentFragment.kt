@@ -2,6 +2,7 @@ package com.example.kai_content.ui.content
 
 import android.content.res.ColorStateList
 import android.graphics.PorterDuff
+import android.net.Uri
 import android.os.Bundle
 import android.util.Log
 import android.view.LayoutInflater
@@ -27,7 +28,9 @@ import com.example.kai_content.ui.operator.content.DetailContentDialogFragment
 import com.google.android.exoplayer2.ExoPlayer
 import com.google.android.exoplayer2.MediaItem
 import com.google.android.exoplayer2.Player
+import com.google.android.exoplayer2.source.hls.HlsMediaSource
 import com.google.android.exoplayer2.ui.PlayerView
+import com.google.android.exoplayer2.upstream.DefaultHttpDataSource
 import com.google.android.material.progressindicator.CircularProgressIndicator
 
 class ShowContentFragment : Fragment() {
@@ -444,15 +447,23 @@ class ShowContentFragment : Fragment() {
     }
 
     private fun initializePlayer(videoUrl: String) {
-        if (isVideoInitialized) return
+        if (videoUrl.isEmpty()) {
+            Toast.makeText(context, "Stream URL is not available.", Toast.LENGTH_SHORT).show()
+            return
+        }
+
+        releasePlayer()
 
         context?.let { ctx ->
             player = ExoPlayer.Builder(ctx).build().apply {
                 playerView.player = this
 
                 // Create media item from URL
-                val mediaItem = MediaItem.fromUri(videoUrl)
-                setMediaItem(mediaItem)
+                val dataSourceFactory = DefaultHttpDataSource.Factory()
+                val hlsMediaSource = HlsMediaSource.Factory(dataSourceFactory)
+                    .createMediaSource(MediaItem.fromUri(Uri.parse(videoUrl)))
+
+                setMediaSource(hlsMediaSource)
 
                 // Restore state if needed
                 playWhenReady = this@ShowContentFragment.playWhenReady

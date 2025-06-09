@@ -45,7 +45,7 @@ data class Content(
     val filePath: String,
     @SerializedName("thumbnail_path")
     val thumbnailPath: String?,
-    val type: String?, // karena bisa null
+    val type: String?,
     val status: String,
     @SerializedName("view_count")
     val viewCount: Int,
