@@ -11,7 +11,8 @@ object RetrofitClient {
      * URL dasar untuk API.
      * Ganti dengan URL server Anda.
      */
-    private const val BASE_URL = "http://192.168.100.133:8000/"
+    private const val BASE_URL = "http://192.168.100.141:8000/"
+//    private const val BASE_URL = "http://192.168.1.3:8000/"
 
     /**
      * Interceptor untuk mencetak log permintaan dan respons HTTP.

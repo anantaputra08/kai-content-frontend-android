@@ -6,21 +6,55 @@ import retrofit2.http.Body
 import retrofit2.http.GET
 import retrofit2.http.POST
 import retrofit2.http.Path
+import retrofit2.http.Query
 
 interface StreamApi {
-    @GET("api/stream/status/{carriage_id}")
-    suspend fun getStreamStatus(
-        @Path("carriage_id") carriageId: Long
+//    @GET("api/stream/status/{carriage_id}")
+//    suspend fun getStreamStatus(
+//        @Path("carriage_id") carriageId: Long
+//    ): Response<StreamStatusResponse>
+
+    /**
+     * Mengambil status stream dan voting untuk lokasi tertentu.
+     * Endpoint: GET api/status?train_id=X&carriage_id=Y
+     */
+    @GET("api/stream/status")
+    suspend fun getStatusForLocation(
+        @Query("train_id") trainId: Long,
+        @Query("carriage_id") carriageId: Long
     ): Response<StreamStatusResponse>
 
     @POST("api/voting/vote")
     suspend fun submitVote(@Body voteRequest: VoteRequest): Response<VoteResponse>
 }
-data class Carriage(
-    @SerializedName("id")
-    val id: Long,
-    @SerializedName("name")
-    val name: String
+
+data class StreamStatusResponse(
+    @SerializedName("now_playing")
+    val nowPlaying: StreamResponse?,
+    @SerializedName("active_voting")
+    val activeVoting: Voting?,
+    @SerializedName("location_info")
+    val locationInfo: LocationInfo?,
+    @SerializedName("server_time")
+    val serverTime: String
+)
+
+data class LocationInfo(
+    @SerializedName("train_name")
+    val trainName: String,
+    @SerializedName("carriage_name")
+    val carriageName: String
+)
+
+data class StreamResponse(
+    @SerializedName("content")
+    val content: ContentInfo?,
+    @SerializedName("is_live")
+    val isLive: Boolean,
+    @SerializedName("sync_data")
+    val syncData: SyncData?,
+    @SerializedName("message")
+    val message: String?
 )
 
 data class VoteRequest(
@@ -38,51 +72,16 @@ data class ContentInfo(
     @SerializedName("description")
     val description: String?,
     @SerializedName("duration_seconds")
-    val durationSeconds: Int?
-)
-
-data class StreamResponse(
-    @SerializedName("content")
-    val content: ContentInfo,
+    val durationSeconds: Int?,
     @SerializedName("stream_url")
-    val streamUrl: String?,
-    @SerializedName("sync_data")
-    val syncData: SyncData?,
-    @SerializedName("is_live")
-    val isLive: Boolean,
-    @SerializedName("next_content")
-    val nextContent: NextContentInStreamResponse?
-)
-
-data class NextContentInStreamResponse(
-    @SerializedName("id")
-    val id: Long,
-    @SerializedName("title")
-    val title: String,
-    @SerializedName("thumbnail")
-    val thumbnail: String,
-    @SerializedName("scheduled_time")
-    val scheduledTime: String,
-    @SerializedName("countdown_seconds")
-    val countdownSeconds: Double?,
-    @SerializedName("description")
-    val description: String?,
-    @SerializedName("duration_seconds")
-    val durationSeconds: Int?
+    val streamUrl: String?
 )
 
 data class SyncData(
-    @SerializedName("server_time")
-    val serverTime: String,
     @SerializedName("playback_position")
     val playbackPosition: Double,
-    @SerializedName("segment_duration")
-    val segmentDuration: Int
-)
-
-data class VotingResponse(
-    @SerializedName("voting")
-    val voting: Voting?
+    @SerializedName("server_time")
+    val serverTime: String?,
 )
 
 data class Voting(
@@ -110,36 +109,10 @@ data class VotingOption(
     @SerializedName("vote_count")
     val voteCount: Int,
     @SerializedName("vote_percentage")
-    val votePercentage: Int
+    val votePercentage: Double
 )
 
 data class VoteResponse(
     @SerializedName("message")
-    val message: String,
-    @SerializedName("option_id")
-    val optionId: Long,
-    @SerializedName("new_vote_count")
-    val newVoteCount: Int,
-    @SerializedName("updated_voting_options")
-    val updatedVotingOptions: List<VotingOptionUpdate>?
-)
-
-data class VotingOptionUpdate(
-    @SerializedName("id")
-    val id: Long,
-    @SerializedName("vote_count")
-    val voteCount: Int,
-    @SerializedName("vote_percentage")
-    val votePercentage: Int
-)
-
-data class StreamStatusResponse(
-    @SerializedName("now_playing")
-    val nowPlaying: StreamResponse?,
-    @SerializedName("active_voting")
-    val activeVoting: Voting?,
-    @SerializedName("carriage")
-    val carriage: Carriage?,
-    @SerializedName("server_time")
-    val serverTime: String
+    val message: String
 )

@@ -1,15 +1,13 @@
 package com.example.kai_content.ui.stream
 
 import android.view.LayoutInflater
-import android.view.View
 import android.view.ViewGroup
-import androidx.core.content.ContextCompat
 import androidx.core.view.isVisible
 import androidx.recyclerview.widget.RecyclerView
 import coil.load
 import com.example.kai_content.R
 import com.example.kai_content.api.VotingOption
-import com.example.kai_content.databinding.ItemVotingVideoBinding // <-- Impor View Binding
+import com.example.kai_content.databinding.ItemVotingVideoBinding
 import java.util.concurrent.TimeUnit
 
 class VotingAdapter(
@@ -51,8 +49,9 @@ class VotingAdapter(
 
         private fun showVoteResults(option: VotingOption) {
             binding.textVoteCount.text = "${option.voteCount} suara"
-            binding.textVotePercentage.text = "${option.votePercentage}%"
-            binding.progressVote.progress = option.votePercentage
+            binding.textVotePercentage.text = "${option.votePercentage.toInt()}%" // Diubah ke Int untuk tampilan
+            // -- SOLUSI: Mengubah Double menjadi Int sebelum diberikan ke ProgressBar --
+            binding.progressVote.progress = option.votePercentage.toInt()
             binding.textVoteCount.isVisible = true
             binding.textVotePercentage.isVisible = true
             binding.progressVote.isVisible = true
@@ -72,7 +71,7 @@ class VotingAdapter(
 
         private fun formatDuration(totalSeconds: Int): String {
             val minutes = TimeUnit.SECONDS.toMinutes(totalSeconds.toLong())
-            val seconds = TimeUnit.SECONDS.toSeconds(totalSeconds.toLong()) % 60
+            val seconds = totalSeconds.toLong() % 60
             return String.format("%02d:%02d", minutes, seconds)
         }
     }

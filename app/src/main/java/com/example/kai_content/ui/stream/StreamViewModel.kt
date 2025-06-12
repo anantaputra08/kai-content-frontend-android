@@ -1,11 +1,12 @@
 package com.example.kai_content.ui.stream
 
+import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.example.kai_content.api.Carriage // <-- Impor data class baru
 import com.example.kai_content.api.ContentInfo
+import com.example.kai_content.api.LocationInfo
 import com.example.kai_content.api.RetrofitClient
 import com.example.kai_content.api.StreamApi
 import com.example.kai_content.api.VoteRequest
@@ -16,7 +17,6 @@ import kotlinx.coroutines.launch
 import java.text.SimpleDateFormat
 import java.util.Date
 import java.util.Locale
-import java.util.TimeZone
 import java.util.Timer
 import java.util.TimerTask
 import java.util.concurrent.TimeUnit
@@ -26,6 +26,8 @@ class StreamViewModel : ViewModel() {
         RetrofitClient.instance.create(StreamApi::class.java)
     }
 
+    // Menyimpan kedua ID yang sedang aktif
+    private var currentTrainId: Long? = null
     private var currentCarriageId: Long? = null
 
     private val _streamStatus = MutableLiveData<StreamStatusViewModelData?>()
@@ -34,8 +36,9 @@ class StreamViewModel : ViewModel() {
     private val _activeVoting = MutableLiveData<Voting?>()
     val activeVoting: LiveData<Voting?> = _activeVoting
 
-    private val _carriage = MutableLiveData<Carriage?>()
-    val carriage: LiveData<Carriage?> = _carriage
+    // Mengganti _carriage dengan _locationInfo
+    private val _locationInfo = MutableLiveData<LocationInfo?>()
+    val locationInfo: LiveData<LocationInfo?> = _locationInfo
 
     private val _votingTimeLeft = MutableLiveData<String>()
     val votingTimeLeft: LiveData<String> = _votingTimeLeft
@@ -49,82 +52,72 @@ class StreamViewModel : ViewModel() {
     private var votingCountdownTimer: Timer? = null
     private var periodicUpdateJob: Job? = null
 
+    // Data class disederhanakan sesuai respons API terbaru
     data class StreamStatusViewModelData(
         val displayContent: ContentInfo,
-        val streamUrl: String?,
         val isLive: Boolean,
-        val scheduledToStart: String?,
-        val countdownSeconds: Double?
     )
 
-    // Load data for a specific carriage ID
-    fun loadDataForCarriage(carriageId: Long) {
-        if (currentCarriageId == carriageId) return
+    /**
+     * Fungsi utama untuk memuat data, sekarang menggunakan trainId dan carriageId.
+     */
+    fun loadDataForLocation(trainId: Long, carriageId: Long) {
+        if (currentTrainId == trainId && currentCarriageId == carriageId) return
+        currentTrainId = trainId
         currentCarriageId = carriageId
 
         periodicUpdateJob?.cancel()
-        startPeriodicUpdates(carriageId)
+        startPeriodicUpdates(trainId, carriageId)
     }
 
-    // Fetch the current status of the stream for the given carriage ID
-    private fun fetchStatus(carriageId: Long) {
+    /**
+     * Mengambil status dari API menggunakan kedua ID.
+     */
+    private fun fetchStatus(trainId: Long, carriageId: Long) {
+        // Tidak menampilkan loading pada pembaruan periodik agar UI lebih halus
+        if (periodicUpdateJob == null) {
+            _isLoading.value = true
+        }
+
         viewModelScope.launch {
             try {
-                val response = apiService.getStreamStatus(carriageId)
+                // Memanggil endpoint API yang sudah diperbarui
+                val response = apiService.getStatusForLocation(trainId, carriageId)
+
                 if (response.isSuccessful) {
                     val status = response.body()
                     _error.value = null
 
-                    // Set the current carriage ID
-                    _carriage.value = status?.carriage
-
-                    // Update the stream status
+                    // Memperbarui info lokasi (kereta dan gerbong)
+                    _locationInfo.value = status?.locationInfo
+                    // Memperbarui status stream (now playing)
                     handleStreamResponse(status?.nowPlaying)
-
-                    // Update the active voting
+                    // Memperbarui sesi voting yang aktif
                     handleVotingResponse(status?.activeVoting)
 
                 } else {
-                    _error.value = "Gagal memuat status: ${response.code()}"
+                    _error.value = "Gagal memuat status: ${response.code()} - ${response.message()}"
                 }
             } catch (e: Exception) {
                 _error.value = "Kesalahan jaringan: ${e.message}"
-                e.printStackTrace()
+                Log.e("StreamViewModel", "Network error", e)
             } finally {
                 _isLoading.value = false
             }
         }
     }
 
-    // Handle the stream response and update the LiveData
+    /**
+     * Memproses data 'now_playing' dari API.
+     */
     private fun handleStreamResponse(nowPlaying: com.example.kai_content.api.StreamResponse?) {
-        val newStatus: StreamStatusViewModelData?
-
-        if (nowPlaying?.isLive == true) {
-            newStatus = StreamStatusViewModelData(
+        val newStatus = if (nowPlaying?.content != null) {
+            StreamStatusViewModelData(
                 displayContent = nowPlaying.content,
-                streamUrl = nowPlaying.streamUrl,
-                isLive = true,
-                scheduledToStart = null,
-                countdownSeconds = null
-            )
-        } else if (nowPlaying?.nextContent != null) {
-            val nextContent = nowPlaying.nextContent
-            newStatus = StreamStatusViewModelData(
-                displayContent = ContentInfo(
-                    id = nextContent.id,
-                    title = nextContent.title,
-                    thumbnail = nextContent.thumbnail,
-                    description = nextContent.description,
-                    durationSeconds = nextContent.durationSeconds
-                ),
-                streamUrl = null,
-                isLive = false,
-                scheduledToStart = nextContent.scheduledTime,
-                countdownSeconds = nextContent.countdownSeconds
+                isLive = nowPlaying.isLive
             )
         } else {
-            newStatus = null
+            null
         }
 
         if (_streamStatus.value != newStatus) {
@@ -132,75 +125,81 @@ class StreamViewModel : ViewModel() {
         }
     }
 
-    // Handle the active voting state
+    /**
+     * Memproses data 'active_voting' dari API.
+     */
     private fun handleVotingResponse(newVoting: Voting?) {
-        val oldVoting = _activeVoting.value
-
-        if (newVoting == null) {
-            if (oldVoting != null) {
-                _activeVoting.value = null
-                votingCountdownTimer?.cancel()
-                votingCountdownTimer = null
-                _votingTimeLeft.value = ""
-            }
-            return
-        }
-
-        // Update voting time left
-        if (oldVoting?.id != newVoting.id) {
+        // Jika ID voting berubah (voting baru dimulai atau selesai)
+        if (_activeVoting.value?.id != newVoting?.id) {
             _activeVoting.value = newVoting
-            startVotingCountdown(newVoting.endTime)
+            if (newVoting != null) {
+                startVotingCountdown(newVoting.endTime)
+            } else {
+                // Hentikan timer jika tidak ada voting
+                votingCountdownTimer?.cancel()
+                _votingTimeLeft.postValue("")
+            }
         }
-
-        // Update voting data
-        else if (oldVoting.totalVotes != newVoting.totalVotes) {
+        // Jika ID sama, cek apakah ada perubahan jumlah suara atau status 'hasVoted'
+        else if (newVoting != null && (_activeVoting.value?.totalVotes != newVoting.totalVotes || _activeVoting.value?.hasVoted != newVoting.hasVoted)) {
             _activeVoting.value = newVoting
         }
     }
 
-    // Submit a vote for the given option ID
+    /**
+     * Mengirim vote, lalu memuat ulang status.
+     */
     fun submitVote(optionId: Long) {
-        val carriageId = currentCarriageId ?: run {
-            _error.value = "Carriage ID tidak ditemukan."
-            return
-        }
+        val trainId = currentTrainId ?: return
+        val carriageId = currentCarriageId ?: return
 
         viewModelScope.launch {
-            _isLoading.value = true
             try {
-                val response = apiService.submitVote(VoteRequest(optionId))
-                if (!response.isSuccessful) {
-                    _error.value = response.errorBody()?.string() ?: "Gagal melakukan vote"
-                }
-
-                fetchStatus(carriageId)
+                apiService.submitVote(VoteRequest(optionId))
+                // Langsung muat ulang status untuk menampilkan hasil vote terbaru
+                fetchStatus(trainId, carriageId)
             } catch (e: Exception) {
                 _error.value = "Kesalahan jaringan saat vote: ${e.message}"
-            } finally {
-                _isLoading.value = false
             }
         }
     }
 
-    // Start periodic updates every 15 seconds
-    private fun startPeriodicUpdates(carriageId: Long) {
+    /**
+     * Memulai pembaruan data secara periodik.
+     */
+    private fun startPeriodicUpdates(trainId: Long, carriageId: Long) {
         periodicUpdateJob = viewModelScope.launch {
             while (true) {
-                fetchStatus(carriageId)
-                // Post every 15 seconds
-                delay(15_000)
+                fetchStatus(trainId, carriageId)
+                delay(15_000) // Update setiap 15 detik
             }
         }
     }
 
-    // Start the voting countdown timer based on the end time string
+    /**
+     * Memulai timer hitung mundur untuk sesi voting.
+     * Logika ini dikembalikan menggunakan SimpleDateFormat agar kompatibel dengan API level 24.
+     */
     private fun startVotingCountdown(endTimeString: String) {
         votingCountdownTimer?.cancel()
         votingCountdownTimer = Timer()
 
         try {
-            val format = SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ssZ", Locale.US)
-            val parsableDateString = endTimeString.replace("Z", "+0000").replace("+07:00", "+0700")
+            // -- LOGIKA DIPERBAIKI --
+            // 1. Ubah timezone "+07:00" menjadi "+0700" agar bisa di-parse
+            val parsableDateString = if (endTimeString.length > 6 && endTimeString[endTimeString.length - 3] == ':') {
+                endTimeString.substring(0, endTimeString.length - 3) + endTimeString.substring(endTimeString.length - 2)
+            } else {
+                endTimeString.replace("Z", "+0000") // Juga handle format 'Z'
+            }
+
+            // 2. Tentukan format yang benar berdasarkan ada atau tidaknya mikrodetik
+            val format = if (parsableDateString.contains(".")) {
+                SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSSSSSZ", Locale.US)
+            } else {
+                SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ssZ", Locale.US)
+            }
+
             val endTime = format.parse(parsableDateString) ?: return
 
             votingCountdownTimer?.scheduleAtFixedRate(object : TimerTask() {
@@ -208,8 +207,7 @@ class StreamViewModel : ViewModel() {
                     val timeDiff = endTime.time - Date().time
                     if (timeDiff <= 0) {
                         _votingTimeLeft.postValue("Selesai")
-                        cancel()
-                        votingCountdownTimer = null
+                        this.cancel()
                     } else {
                         val minutes = TimeUnit.MILLISECONDS.toMinutes(timeDiff)
                         val seconds = TimeUnit.MILLISECONDS.toSeconds(timeDiff) % 60
@@ -217,15 +215,13 @@ class StreamViewModel : ViewModel() {
                     }
                 }
             }, 0, 1000)
+
         } catch (e: Exception) {
-            _error.postValue("Gagal memproses waktu voting: ${e.message}")
-            votingCountdownTimer?.cancel()
-            votingCountdownTimer = null
-            e.printStackTrace()
+            Log.e("StreamViewModel", "Gagal memproses waktu voting: '${endTimeString}'", e)
+            _votingTimeLeft.postValue("Error")
         }
     }
 
-    // Clear resources when ViewModel is cleared
     override fun onCleared() {
         super.onCleared()
         votingCountdownTimer?.cancel()
