@@ -129,6 +129,7 @@ class StreamViewModel : ViewModel() {
      * Memproses data 'active_voting' dari API.
      */
     private fun handleVotingResponse(newVoting: Voting?) {
+        val votingJustEnded = _activeVoting.value != null && newVoting == null
         // Jika ID voting berubah (voting baru dimulai atau selesai)
         if (_activeVoting.value?.id != newVoting?.id) {
             _activeVoting.value = newVoting
@@ -143,6 +144,20 @@ class StreamViewModel : ViewModel() {
         // Jika ID sama, cek apakah ada perubahan jumlah suara atau status 'hasVoted'
         else if (newVoting != null && (_activeVoting.value?.totalVotes != newVoting.totalVotes || _activeVoting.value?.hasVoted != newVoting.hasVoted)) {
             _activeVoting.value = newVoting
+        }
+        // 2. Jika terdeteksi voting baru saja berakhir, jadwalkan satu kali fetch tambahan
+        //    setelah jeda singkat. Ini tidak akan mengganggu polling 15 detik utama.
+        if (votingJustEnded) {
+            viewModelScope.launch {
+                delay(500L) // Tunggu 0.5 detik untuk memberi jeda
+                Log.d("StreamViewModel", "Voting just ended. Triggering an extra fetch.")
+                // Ambil ID dari properti class dan panggil fetchStatus
+                currentTrainId?.let { trainId ->
+                    currentCarriageId?.let { carriageId ->
+                        fetchStatus(trainId, carriageId)
+                    }
+                }
+            }
         }
     }
 
@@ -185,8 +200,7 @@ class StreamViewModel : ViewModel() {
         votingCountdownTimer = Timer()
 
         try {
-            // -- LOGIKA DIPERBAIKI --
-            // 1. Ubah timezone "+07:00" menjadi "+0700" agar bisa di-parse
+            // 1. Ubah format string waktu agar bisa diparsing
             val parsableDateString = if (endTimeString.length > 6 && endTimeString[endTimeString.length - 3] == ':') {
                 endTimeString.substring(0, endTimeString.length - 3) + endTimeString.substring(endTimeString.length - 2)
             } else {
@@ -207,6 +221,17 @@ class StreamViewModel : ViewModel() {
                     val timeDiff = endTime.time - Date().time
                     if (timeDiff <= 0) {
                         _votingTimeLeft.postValue("Selesai")
+
+                        Log.d("StreamViewModel", "Voting countdown finished. Triggering fetch.")
+                        // Jalankan fetchStatus di scope ViewModel
+                        viewModelScope.launch {
+                            currentTrainId?.let { trainId ->
+                                currentCarriageId?.let { carriageId ->
+                                    fetchStatus(trainId, carriageId)
+                                }
+                            }
+                        }
+
                         this.cancel()
                     } else {
                         val minutes = TimeUnit.MILLISECONDS.toMinutes(timeDiff)

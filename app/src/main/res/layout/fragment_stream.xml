@@ -92,17 +92,17 @@
                 tools:text="Live Now" />
 
             <!-- TextView baru untuk menampilkan info lokasi -->
-            <TextView
-                android:id="@+id/text_location_info"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="4dp"
-                android:drawablePadding="4dp"
-                android:textColor="#808080"
-                android:textSize="12sp"
-                app:drawableStartCompat="@drawable/ic_train"
-                app:drawableTint="#808080"
-                tools:text="Argo Bromo - Gerbong 1" />
+<!--            <TextView-->
+<!--                android:id="@+id/text_location_info"-->
+<!--                android:layout_width="match_parent"-->
+<!--                android:layout_height="wrap_content"-->
+<!--                android:layout_marginTop="4dp"-->
+<!--                android:drawablePadding="4dp"-->
+<!--                android:textColor="#808080"-->
+<!--                android:textSize="12sp"-->
+<!--                app:drawableStartCompat="@drawable/ic_train"-->
+<!--                app:drawableTint="#808080"-->
+<!--                tools:text="Argo Bromo - Gerbong 1" />-->
 
         </LinearLayout>
     </com.google.android.material.appbar.AppBarLayout>

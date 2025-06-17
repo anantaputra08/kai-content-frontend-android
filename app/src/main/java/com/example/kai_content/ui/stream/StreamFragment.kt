@@ -6,6 +6,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
+import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
@@ -96,7 +97,15 @@ class StreamFragment : Fragment() {
         }
 
         viewModel.locationInfo.observe(viewLifecycleOwner) { location ->
-            binding.textLocationInfo.text = if(location != null) "Anda di: ${location.trainName} - ${location.carriageName}" else "Memuat lokasi..."
+            if(location != null) {
+                val newTitle = "${location.trainName} - ${location.carriageName}"
+
+                //    Menggunakan 'activity as? AppCompatActivity' adalah cara yang aman
+                (activity as? AppCompatActivity)?.supportActionBar?.title = newTitle
+            } else {
+                // Set judul default saat data belum ada atau sedang loading
+                (activity as? AppCompatActivity)?.supportActionBar?.title = "Memuat Lokasi..."
+            }
         }
 
         viewModel.votingTimeLeft.observe(viewLifecycleOwner) { timeLeft ->
