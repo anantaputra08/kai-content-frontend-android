@@ -85,6 +85,7 @@ class StreamFragment : Fragment() {
                 binding.videoPlayerThumbnail.isVisible = true
                 binding.playerViewExo.isVisible = false
             }
+            updateUiVisibility()
         }
 
         viewModel.activeVoting.observe(viewLifecycleOwner) { voting ->
@@ -94,6 +95,13 @@ class StreamFragment : Fragment() {
                 binding.textVotingDescription.text = voting.description
                 votingAdapter.updateData(voting.options, voting.hasVoted)
             }
+            updateUiVisibility()
+        }
+
+        // Observer baru untuk pesan status
+        viewModel.statusMessage.observe(viewLifecycleOwner) { message ->
+            binding.textStatusOverlay.text = message
+            updateUiVisibility()
         }
 
         viewModel.locationInfo.observe(viewLifecycleOwner) { location ->
@@ -118,6 +126,52 @@ class StreamFragment : Fragment() {
 
         viewModel.isLoading.observe(viewLifecycleOwner) { isLoading ->
             binding.progressBarStream.isVisible = isLoading
+        }
+
+        viewModel.isLoading.observe(viewLifecycleOwner) {
+            updateUiVisibility()
+        }
+    }
+
+    private fun updateUiVisibility() {
+        val isLoading = viewModel.isLoading.value == true
+        val statusMessage = viewModel.statusMessage.value
+        val streamStatus = viewModel.streamStatus.value
+        val activeVoting = viewModel.activeVoting.value
+
+        binding.progressBarStream.isVisible = isLoading
+
+        // Prioritas 1: Tampilkan pesan status jika ada.
+        if (statusMessage != null) {
+            binding.textStatusOverlay.isVisible = true
+            // Sembunyikan semua komponen lain
+            binding.playerViewExo.isVisible = false
+            binding.videoPlayerThumbnail.isVisible = false
+            binding.textVideoTitle.isVisible = false
+            binding.textVideoStats.isVisible = false
+            binding.votingSection.isVisible = false
+            releasePlayer() // Pastikan player berhenti
+            return // Hentikan proses lebih lanjut
+        }
+
+        // Jika tidak ada pesan status, sembunyikan overlay.
+        binding.textStatusOverlay.isVisible = false
+
+        // Prioritas 2: Tampilkan player/thumbnail dan voting jika tidak loading.
+        if (!isLoading) {
+            val isLive = streamStatus?.isLive == true
+            binding.playerViewExo.isVisible = isLive
+            binding.videoPlayerThumbnail.isVisible = !isLive
+            binding.textVideoTitle.isVisible = true
+            binding.textVideoStats.isVisible = true
+            binding.votingSection.isVisible = activeVoting != null
+        } else {
+            // Sembunyikan konten utama saat loading untuk menghindari UI yang aneh
+            binding.playerViewExo.isVisible = false
+            binding.videoPlayerThumbnail.isVisible = false
+            binding.textVideoTitle.isVisible = false
+            binding.textVideoStats.isVisible = false
+            binding.votingSection.isVisible = false
         }
     }
 

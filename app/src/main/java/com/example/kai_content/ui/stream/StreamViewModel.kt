@@ -36,6 +36,9 @@ class StreamViewModel : ViewModel() {
     private val _activeVoting = MutableLiveData<Voting?>()
     val activeVoting: LiveData<Voting?> = _activeVoting
 
+    private val _statusMessage = MutableLiveData<String?>()
+    val statusMessage: LiveData<String?> = _statusMessage
+
     // Mengganti _carriage dengan _locationInfo
     private val _locationInfo = MutableLiveData<LocationInfo?>()
     val locationInfo: LiveData<LocationInfo?> = _locationInfo
@@ -90,11 +93,20 @@ class StreamViewModel : ViewModel() {
 
                     // Memperbarui info lokasi (kereta dan gerbong)
                     _locationInfo.value = status?.locationInfo
-                    // Memperbarui status stream (now playing)
-                    handleStreamResponse(status?.nowPlaying)
-                    // Memperbarui sesi voting yang aktif
-                    handleVotingResponse(status?.activeVoting)
-
+                    // Cek apakah ada pesan status perjalanan dari server
+                    if (status?.message != null) {
+                        // Jika ada, tampilkan pesan itu dan kosongkan data lain
+                        _statusMessage.value = status.message
+                        _streamStatus.value = null
+                        _activeVoting.value = null
+                        votingCountdownTimer?.cancel()
+                        _votingTimeLeft.postValue("")
+                    } else {
+                        // Jika tidak ada pesan, proses seperti biasa
+                        _statusMessage.value = null
+                        handleStreamResponse(status?.nowPlaying)
+                        handleVotingResponse(status?.activeVoting)
+                    }
                 } else {
                     _error.value = "Gagal memuat status: ${response.code()} - ${response.message()}"
                 }

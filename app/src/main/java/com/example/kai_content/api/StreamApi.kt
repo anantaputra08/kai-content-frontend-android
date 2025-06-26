@@ -36,7 +36,9 @@ data class StreamStatusResponse(
     @SerializedName("location_info")
     val locationInfo: LocationInfo?,
     @SerializedName("server_time")
-    val serverTime: String
+    val serverTime: String,
+    @SerializedName("message")
+    val message: String?
 )
 
 data class LocationInfo(

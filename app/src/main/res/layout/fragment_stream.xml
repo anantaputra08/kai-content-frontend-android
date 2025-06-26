@@ -198,5 +198,18 @@
         </LinearLayout>
 
     </androidx.core.widget.NestedScrollView>
+    <TextView
+        android:id="@+id/text_status_overlay"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:gravity="center"
+        android:padding="24dp"
+        android:textColor="@android:color/black"
+        android:textSize="18sp"
+        android:textStyle="bold"
+        android:visibility="gone"
+        tools:text="The train journey has ended. Voting is no longer available."
+        tools:visibility="visible" />
 
 </androidx.coordinatorlayout.widget.CoordinatorLayout>
